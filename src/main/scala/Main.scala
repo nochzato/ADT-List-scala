@@ -21,6 +21,11 @@ def takeWhile[A](xs: MyList[A], p: A => Boolean): MyList[A] =
     case MyCons(hd, tl) =>
       if (p(hd)) then MyCons(hd, takeWhile(tl, p)) else MyNil
 
+def unfold[A](a: A)(next: A => Option[A]): MyList[A] =
+  next(a) match
+    case None    => MyNil
+    case Some(i) => MyCons(a, unfold(i)(next))
+
 // not working yet
 def indexOf[A](xs: MyList[A], a: A): Option[Int] =
   xs match
@@ -31,11 +36,6 @@ def indexOfNth[A](xs: MyList[A], a: A, index: Int): Option[Int] =
   xs match
     case MyNil          => None
     case MyCons(hd, tl) => ???
-
-def unfold[A](a: A)(next: A => Option[A]): MyList[A] =
-  next(a) match
-    case None    => MyNil
-    case Some(i) => MyCons(a, unfold(i)(next))
 
 @main def main: Unit =
   println(
