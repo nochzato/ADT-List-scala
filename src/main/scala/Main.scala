@@ -32,12 +32,18 @@ def indexOfNth[A](xs: MyList[A], a: A, index: Int): Option[Int] =
     case MyNil          => None
     case MyCons(hd, tl) => ???
 
-def unfold[A](a: A)(next: A => Option[A]): List[A] = ???
+def unfold[A](a: A)(next: A => Option[A]): MyList[A] =
+  next(a) match
+    case None    => MyNil
+    case Some(i) => MyCons(a, unfold(i)(next))
 
 @main def main: Unit =
   println(
-    takeWhile(MyList.of(1, 2, 3, 4, 5), (x: Int) => x != 4)
+    takeFirst(MyList.of(1, 2, 3, 4, 5), 3)
   )
+
+  println(takeWhile(MyList.of(1, 2, 3, 4, 5), (x: Int) => x != 4))
+
   println(
-    indexOf(MyList.of(1, 2, 3, 4, 5), 8)
+    unfold(1) { i => if (i < 4) Some(i + 1) else None }
   )
