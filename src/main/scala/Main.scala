@@ -12,12 +12,13 @@ enum MyList[+A]:
       xs match
         case MyNil          => result
         case MyCons(hd, tl) => go(tl, MyCons(hd, result))
+
     go(this)
 
   override def toString: String =
     @tailrec
-    def go(sb: StringBuilder, as: MyList[A]): String = {
-      as match {
+    def go(sb: StringBuilder, as: MyList[A]): String =
+      as match
         case MyNil =>
           sb.append("]").result
         case MyCons(h, t) =>
@@ -27,8 +28,7 @@ enum MyList[+A]:
               .append(if t == MyNil then "" else ", "),
             t
           )
-      }
-    }
+
     go(new StringBuilder("["), this)
 
   def size: Int =
@@ -37,7 +37,20 @@ enum MyList[+A]:
       xs match
         case MyNil          => result
         case MyCons(hd, tl) => go(tl, result + 1)
+
     go(this)
+
+  def isSubList[A](xs: MyList[A]): Boolean =
+    @tailrec
+    def go[A](xs1: MyList[A], xs2: MyList[A]): Boolean =
+      xs1 match
+        case MyNil => true
+        case MyCons(hd1, tl1) =>
+          xs2 match
+            case MyNil            => false
+            case MyCons(hd2, tl2) => if hd1 == hd2 then go(tl1, tl2) else false
+
+    go(this, xs)
 
   def takeFirst(n: Int): MyList[A] =
     @tailrec
@@ -46,6 +59,7 @@ enum MyList[+A]:
         case MyNil => result.reverse
         case MyCons(hd, tl) =>
           if n > 0 then go(tl, n - 1, MyCons(hd, result)) else result.reverse
+
     go(this, n)
 
   def takeWhile(p: A => Boolean): MyList[A] =
@@ -59,6 +73,7 @@ enum MyList[+A]:
         case MyNil => result.reverse
         case MyCons(hd, tl) =>
           if p(hd) then go(tl, p, MyCons(hd, result)) else result.reverse
+
     go(this, p)
 
   def indexOf[A](a: A): Option[Int] =
@@ -69,16 +84,11 @@ enum MyList[+A]:
         case MyCons(hd, tl) =>
           if hd == a then Some(index)
           else go(tl, a, index + 1)
+
     go(this, a)
 
   // def indexOfNth[A](a: A, position: Int): Option[Int] =
-  //   @tailrec
-  //   def go[A](xs: MyList[A], a: A, position: Int, index: Int = 0): Option[Int] =
-  //     position match
-  //       case 1 => Some(index + this.indexOf(a).get)
-  //       case _ => go(xs, a, position - 1, index + this.indexOf(a).get)
-
-  //   go(this, a, position)
+  //   ???
 
   def indexOfNth[A](a: A, position: Int): Option[Int] =
     @tailrec
@@ -91,15 +101,19 @@ enum MyList[+A]:
               case 1 => Some(index)
               case _ => go(tl, a, position - 1, index + 1)
           else go(tl, a, position, index + 1)
+
     go(this, a, position)
 
   def unfold[A](a: A)(next: A => Option[A]): MyList[A] =
     @tailrec
-    def go[A](a: A, result: MyList[A])(next: A => Option[A]): MyList[A] =
+    def go[A](a: A, result: MyList[A] = MyNil)(
+        next: A => Option[A]
+    ): MyList[A] =
       next(a) match
         case None    => result.reverse
         case Some(i) => go(i, MyCons(a, result))(next)
-    go(a, MyNil)(next)
+
+    go(a)(next)
 
 import MyList.*
 
