@@ -1,3 +1,3 @@
-## PMTiSWD2022
+## List Algebraic Data Type
 
-first FP lab
+Built with Scala
