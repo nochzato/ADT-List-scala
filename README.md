@@ -2,7 +2,7 @@
 
 Built with Scala
 
-function list:
+functions list:
 - [x] takeFirst() 
 - [x] takeWhile()
 - [x] indexOf()
